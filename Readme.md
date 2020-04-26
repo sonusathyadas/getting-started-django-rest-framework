@@ -1,6 +1,7 @@
 # Getting Started - Django Rest Framework (DRF)
 
 ![](https://www.django-rest-framework.org/img/logo.png)
+
 Django is a popular web development framework in Python. It helps you to create web based applications such as websites and web services. Django Rest Framework (DRF) is a powerful toolkit that helps you to create RESTful services with Django. It provide serialization support for ORM and non-ORM data models. It provides a browserable web ui that helps developers to run and test APIs. You can create function based views and class based views for your Django REST applications.
 
 ## Setting up Python Virtual Environment in VS Code
