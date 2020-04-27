@@ -56,5 +56,83 @@ To create a minimal Django app, then, it's necessary to first create the Django 
 
 ## Building your first REST service using Django Rest Framework
 
-1) Open Integrated Terminal in the 
+1) Open Integrated Terminal of VS Code in the virtual environment and run the following command.
+    > django-admin startapp catalogservice
+
+2) Open the `eshopproject\settings.py` and add the `rest_framework` and `catalogservice` in the `INSTALLED_APPS` list.
+    ```    
+    INSTALLED_APPS = [
+        'django.contrib.admin',
+        'django.contrib.auth',
+        'django.contrib.contenttypes',
+        'django.contrib.sessions',
+        'django.contrib.messages',
+        'django.contrib.staticfiles',
+        'rest_framework',
+        'catalogservice'
+    ]
+    ```
+3) Create a model class in the `catalogservice\models.py` file. Add the following code to it.
+    ```
+    from django.db import models
+
+    class CatalogItem(models.Model):
+        name = models.CharField(max_length=50)
+        unit_price = models.FloatField()
+        quantity = models.IntegerField()
+        mfg_date = models.DateField(name="manufacturing_date")
+        brand = models.CharField(max_length=50)
+        item_type=models.CharField(max_length=50)
+    ```
+4) Create a serializer class for the model you have created. Create a new file `catalogservice\serializers.py` and add the following code.
+    ```
+    from rest_framework import serializers
+    from catalogservice import models as app_models
+
+    class CatalogItemSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = app_models.CatalogItem
+            fields = "__all__"
+    ```
+5) You can now create a view for the catalog service. Add the following code to `catalogservice\views.py`.
+    ```
+    from django.shortcuts import render
+    from rest_framework import viewsets
+    from catalogservice import models as app_models
+    from catalogservice import serializers
+
+    class CatalogViewSet(viewsets.ModelViewSet):
+        queryset = app_models.CatalogItem.objects.all()
+        serializer_class = serializers.CatalogItemSerializer
+    ```
+6) Now, you can create a route patter for your API endpoints in the `catalogservice\urls.py` file. Create a new file `catalogservice\urls.py` and add the following code to it.
+    ```
+    from django.urls import path, include
+    from rest_framework import routers
+    from catalogservice import views as app_views
+
+    router = routers.DefaultRouter()
+    router.register("", app_views.CatalogViewSet)
+
+    urlpatterns=[
+        path("", include(router.urls ))
+    ]
+    ```
+7) You can now update the project level urls in the `eshopproject\urls.py` file. Add the following code to the `eshopproject\urls.py` file.
+    ```    
+    from django.contrib import admin
+    from django.urls import path, include
+
+    urlpatterns = [
+        path('admin/', admin.site.urls),
+        path('api/catalog/', include('catalogservice.urls') )
+    ]
+    ```
+8) Finally, you need to enable migrations for the new models created in the api application. Run the following commands to create and sync migrations with database.
+    > python manage.py makemigrations
+    > python manage.py migrate
+
+9) Run the application and test the url `http://localhost:8000/api/catalog/`. This will opens a browsable web UI that allows you to view the catalog items and an html form to post a new item to the API.
+
+
 
