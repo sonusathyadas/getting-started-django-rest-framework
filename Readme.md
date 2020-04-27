@@ -129,7 +129,8 @@ To create a minimal Django app, then, it's necessary to first create the Django 
     ]
     ```
 8) Finally, you need to enable migrations for the new models created in the api application. Run the following commands to create and sync migrations with database.
-    > python manage.py makemigrations    
+    > python manage.py makemigrations   
+    
     > python manage.py migrate
 
 9) Run the application and test the url `http://localhost:8000/api/catalog/`. This will opens a browsable web UI that allows you to view the catalog items and an html form to post a new item to the API.
