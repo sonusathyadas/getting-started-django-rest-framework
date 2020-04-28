@@ -135,5 +135,51 @@ To create a minimal Django app, then, it's necessary to first create the Django 
 
 9) Run the application and test the url `http://localhost:8000/api/catalog/`. This will opens a browsable web UI that allows you to view the catalog items and an html form to post a new item to the API.
 
+## Configuring Swagger documentation for API
+Swagger documentation also called Open API documentaion is helping API developers to document the RESTful services for the end users. In the following steps we are going to configure the Swagger documentation for our application. 
 
-
+1) Open the Terminal in Virtual environment in VS Code and install the `drf-ysag` package using the `pip` command.
+    > pip install drf-yasg
+2) Add the swagger package application module in the `INSTALLED_APPS` list in the `eshopproject\settings.py` file.
+    ```
+    INSTALLED_APPS = [
+        'django.contrib.admin',
+        'django.contrib.auth',
+        'django.contrib.contenttypes',
+        'django.contrib.sessions',
+        'django.contrib.messages',
+        'django.contrib.staticfiles',
+        'rest_framework',
+        'catalogservice',
+        'drf_yasg'
+    ]
+    ```
+3) Now, we need to configure the swagger endpoint for the application. You can configure it in the  `webproject\urls.py` file. Add the following import statements in the file.
+    ```
+    from django.conf.urls import url
+    from rest_framework import permissions
+    from drf_yasg.views import get_schema_view
+    from drf_yasg import openapi
+    ```
+4) You can now configure the view for swagger documentation. The `drf_ysag.views.get_schema_view` function will provide the view for Swagger documentaion. You can call the function with an argument that defines the metadata info for the API application. Add the following code below the package import statements in `webproject\urls.py` file.
+    ```
+    schema_view = get_schema_view(
+        openapi.Info(
+            title="Eshop API",
+            default_version='v1',
+            description="Eshop application api",
+            terms_of_service="https://www.google.com/policies/terms/",
+            contact=openapi.Contact(email="sonusathyadas@hotmail.com"),
+            license=openapi.License(name="BSD License"),
+        ),
+        public=True,
+        permission_classes=(permissions.AllowAny,),
+        )
+    ```
+5) You can now add a set of url patterns that allows you to download json/yaml api documentaion, swagger UI and redoc. Add the following path configurations in the `urlpatterns` list.
+    ```
+    url(r'^(?P<format>json|yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    url(r'^$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    ```
+6) Run the appliation using the `python manage.py runserver` command and navigate to `http://localhost:8000/`. You will see the swagger UI page with all the API operations in the `catalogservice`. You can also download the json or yaml documentation using the `http://127.0.0.1:8000/?format=.json` or `http://127.0.0.1:8000/?format=.yaml` endpoints. View the redoc API UI using the `http://127.0.0.1:8000/redoc/` endpoint.
